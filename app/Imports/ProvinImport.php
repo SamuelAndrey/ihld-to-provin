@@ -11,12 +11,12 @@ use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
 
-class ProvinImport implements ToCollection, WithHeadingRow, WithChunkReading, ShouldQueue, WithCustomCsvSettings
+class ProvinImport implements ToCollection, WithHeadingRow, WithChunkReading, WithCustomCsvSettings
 {
 
     public function chunkSize(): int
     {
-        return 1000;
+        return 2000;
     }
 
     public function getCsvSettings(): array
