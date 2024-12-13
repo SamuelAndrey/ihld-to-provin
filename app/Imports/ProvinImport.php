@@ -13,7 +13,6 @@ use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
 
 class ProvinImport implements ToCollection, WithHeadingRow, WithChunkReading, WithCustomCsvSettings
 {
-
     public function chunkSize(): int
     {
         return 2000;
@@ -28,13 +27,11 @@ class ProvinImport implements ToCollection, WithHeadingRow, WithChunkReading, Wi
 
     public function collection(Collection $rows): void
     {
-        $dataToUpsert = [];
-
         foreach ($rows as $row) {
 
             $processDateRaw = $row['update_date'] ?? null;
-
             $processDate = null;
+
             if ($processDateRaw) {
                 try {
                     $processDate = Carbon::createFromFormat('n/j/Y H:i', $processDateRaw)->format('Y-m-d H:i:s');
@@ -43,7 +40,8 @@ class ProvinImport implements ToCollection, WithHeadingRow, WithChunkReading, Wi
                 }
             }
 
-            $dataToUpsert[] = [
+            // Data to be upserted
+            $data = [
                 'ODP_EID'         => $row['device_id'] ?? null,
                 'ODP_ID'          => $row['id_odp'] ?? null,
                 'REGIONAL'        => $row['telkom_regional'] ?? null,
@@ -64,11 +62,16 @@ class ProvinImport implements ToCollection, WithHeadingRow, WithChunkReading, Wi
                 'TOTAL'           => $row['is_total'] ?? null,
                 'ODC'             => $this->getStringBeforeSlash($row['odp_name'] ?? ''),
             ];
-        }
 
-        DB::table('ODP_INFO')->upsert($dataToUpsert, ['ODP_EID','ODP_ID'], [
-            'REGIONAL','WITEL','DATEL','STO','STO_NAME','ODP_NAME','ODP_LOCATION','LATITUDE','LONGITUDE', 'OCCUPANCY', 'CREATEDDATE','PROCESS_DATE','ISI','ISI_DESCRIPTION','KOSONG','TOTAL','ODC'
-        ]);
+            // Keys for matching existing records
+            $conditions = [
+                'ODP_EID' => $data['ODP_EID'],
+                'ODP_ID'  => $data['ODP_ID'],
+            ];
+
+            // Use updateOrCreate for simplicity
+            DB::table('ODP_INFO')->updateOrInsert($conditions, $data);
+        }
     }
 
     private function getStringBeforeSlash($string): string
