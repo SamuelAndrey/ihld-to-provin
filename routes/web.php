@@ -17,5 +17,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [SyncProvinController::class, 'index'])
     ->name('sync.page');
 
-Route::post('/provin/import', [SyncProvinController::class, 'importIHLDToProvin'])
+Route::post('/provin/import', [SyncProvinController::class, 'startImport'])
     ->name('sync.import');

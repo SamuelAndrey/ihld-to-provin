@@ -16,7 +16,7 @@ class SyncProvinController extends Controller
         return view('import.index');
     }
 
-    public function importIHLDToProvin(Request $request): RedirectResponse
+    public function startImport(Request $request): RedirectResponse
     {
         set_time_limit(10800);
 

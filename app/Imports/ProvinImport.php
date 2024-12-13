@@ -55,6 +55,7 @@ class ProvinImport implements ToCollection, WithHeadingRow, WithChunkReading, Sh
                 'ODP_LOCATION'    => $row['odp_name'] ?? null,
                 'LATITUDE'        => $row['latitude'] ?? null,
                 'LONGITUDE'       => $row['longitude'] ?? null,
+                'OCCUPANCY'       => ($row['used'] / $row['is_total']),
                 'CREATEDDATE'     => $row['tgl_golive'],
                 'PROCESS_DATE'    => $processDate,
                 'ISI'             => $row['used'] ?? null,
@@ -66,7 +67,7 @@ class ProvinImport implements ToCollection, WithHeadingRow, WithChunkReading, Sh
         }
 
         DB::table('ODP_INFO')->upsert($dataToUpsert, ['ODP_EID','ODP_ID'], [
-            'REGIONAL','WITEL','DATEL','STO','STO_NAME','ODP_NAME','ODP_LOCATION','LATITUDE','LONGITUDE','CREATEDDATE','PROCESS_DATE','ISI','ISI_DESCRIPTION','KOSONG','TOTAL','ODC'
+            'REGIONAL','WITEL','DATEL','STO','STO_NAME','ODP_NAME','ODP_LOCATION','LATITUDE','LONGITUDE', 'OCCUPANCY', 'CREATEDDATE','PROCESS_DATE','ISI','ISI_DESCRIPTION','KOSONG','TOTAL','ODC'
         ]);
     }
 
